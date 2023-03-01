@@ -6,9 +6,9 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-public class Highscore extends JFrame {
+public class Fhighscore extends JFrame {
 	private JPanel contentPane;
-	public Highscore() {
+	public Fhighscore() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		contentPane = new JPanel();
@@ -19,11 +19,11 @@ public class Highscore extends JFrame {
 		Ftable.setVisible(true);
 		Ftable.setModel(new DefaultTableModel(
 				new Object[][] {
-					{"id", "name", "highscore"},
+					{"id", "name", "fail score"},
 					{null, null, null}
 				},
 				new String[] {
-					"id", "name", "highscore"
+					"id", "name", "fhighscore"
 				}
 			));
 			

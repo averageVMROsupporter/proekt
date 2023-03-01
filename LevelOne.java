@@ -32,6 +32,8 @@ import java.awt.Color;
 import java.awt.SystemColor;
 
 public class LevelOne extends JFrame {
+	int brA=0;
+	int brB=0;
 	// poleto na igrata, koeto e dvumeren masiv
 	String[][] grid = new String[6][6];
 	// dolu cheirite sa masivi, koito zapazvat kordinatite na obektite v nivoto,
@@ -73,6 +75,9 @@ public class LevelOne extends JFrame {
 	int brHighscore = 0;
 	private JPanel contentPane;
 	JLabel[][] lblArr = new JLabel[grid.length][grid[0].length];
+	JTable Ftable = new JTable();
+	JTable Htable = new JTable();
+	JTable Utable = new JTable();
 	int temp=0;
 	int sus = 0;
 	boolean amogus = true;
@@ -82,6 +87,7 @@ public class LevelOne extends JFrame {
 	static LinkedList<String> list = new LinkedList<>();
 	Scanner sc = new Scanner(System.in);
 	private JTextField txtYourMoves;
+	private JTextField nameField;
 	private JTextField textField;
 
 	public LevelOne() {
@@ -134,39 +140,10 @@ public class LevelOne extends JFrame {
 		btnMoveDown.setBounds(76, 126, 45, 45);
 		contentPane.add(btnMoveDown);
 		
-		JTable table = new JTable();
-		table.setVisible(false);
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"id", "name", "highscore"},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-				{null, null, null},
-			},
-			new String[] {
-				"id", "name", "highscore"
-			}
-		));
-		
-		table.setBounds(91, 55, 504, 336);
-		contentPane.add(table);
+
+//		
+//		
+
 
 		// buton koito marda geroq nadqsno
 		JButton btnMoveRight = new JButton("->");
@@ -552,25 +529,78 @@ public class LevelOne extends JFrame {
 				setMovement("");
 			}
 		} else {
-			table table = new table();
-			table.setVisible(true);
-			try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			Connection con;
-			con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Demo","root","");
-			Statement myStmt = con.createStatement();
-			String sql = "insert into highscore"
-			+ "(hname,score)"
-			+ " values('imence', 8)";
-			myStmt.executeUpdate(sql);
-			ResultSet myRs = myStmt.executeQuery("select * from highscore");
+			JPanel contentPane1 = new JPanel();
+			contentPane1.setBorder(new EmptyBorder(5, 5, 5, 5));
+			setContentPane(contentPane1);
+			contentPane1.setLayout(null);
 			
-			while (myRs.next()) {
-				System.out.println(myRs.getString("hname") + ", " + myRs.getString("score"));
-			}
-			}catch (Exception exc) {
-				exc.printStackTrace();
-			}
+			nameField = new JTextField();
+			nameField.setText("");
+			nameField.setColumns(10);
+			nameField.setBackground(SystemColor.controlHighlight);
+			nameField.setBounds(200, 200, 200, 60);
+			contentPane1.add(nameField);
+			
+			JButton enter = new JButton("Enter");
+			enter.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					name=nameField.getText();
+					try {
+						Class.forName("com.mysql.cj.jdbc.Driver");
+						Connection con;
+						con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Demo","root","");
+						Statement myStmt = con.createStatement();
+							myStmt.executeUpdate("insert into `highscore` (hname,score) value ('"+name+"', '"+moves+"')");
+							ResultSet myRs1 = myStmt.executeQuery("select * from highscore");
+							DefaultTableModel model1 = (DefaultTableModel) Htable.getModel();
+							DefaultTableModel model2 = (DefaultTableModel) Ftable.getModel();
+							while (myRs1.next()) {
+								model1.addRow(new Object[] {myRs1.getString("hid"),myRs1.getString("hname"),myRs1.getString("score")});
+							}
+							myStmt.executeUpdate("insert into `fails` (fname,fscore) value ('"+name+"', '"+moves+"')");
+							ResultSet myRs2 = myStmt.executeQuery("select * from fails");
+							while (myRs2.next()) {
+								model2.addRow(new Object[] {myRs2.getString("fid"),myRs2.getString("fname"),myRs2.getString("fscore")});
+							}
+						}catch (Exception exc) {
+							exc.printStackTrace();
+						}
+				}
+			});
+			enter.setBounds(450, 200, 158, 60);
+			contentPane1.add(enter);
+			
+			JButton remove = new JButton("Remove");
+			remove.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					try {
+						Class.forName("com.mysql.cj.jdbc.Driver");
+						Connection con;
+						con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Demo","root","");
+						Statement myStmt = con.createStatement();
+						myStmt.executeUpdate("delete from `highscore` where hname= '"+name+"'");
+						myStmt.executeUpdate("delete from `fails` where fname= '"+name+"'");
+						}catch (Exception exc) {
+							exc.printStackTrace();
+						}
+				}
+			});
+			remove.setBounds(450, 300, 158, 60);
+			contentPane1.add(remove);
+			
+			JButton table = new JButton("Table");
+			table.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+			Fhighscore frame1 = new Fhighscore();
+			frame1.setVisible(true);
+			Highscore frame2 = new Highscore();
+			frame2.setVisible(true);
+				}
+			});
+			table.setBounds(450, 380, 158, 60);
+			contentPane1.add(table);
+			
+	
 			lvlComplete();
 
 			highscoreText = 0;
